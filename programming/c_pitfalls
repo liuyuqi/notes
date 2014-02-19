@@ -1,9 +1,25 @@
 ========================
 segmentation fault:
-----------
-  some pointers need to be initialized before being used in a function.
+------------------------
+1. Some pointers need to be initialized before being used in a function.
    Wrong: struct stat *stat_buf;
           fstat (fd_read, stat_buf);
 
    Correct: struct stat stat_buf;
             fstat (fd_read, &stat_buf);
+
+2. Avoid referencing NULL pointers, which is very important! You might have initialized a pointer as NULL, and then get into trouble referencing it before assigning a value to it.
+
+========================
+make warning: incompatible implicit declaration of built-in function ‘exit’ [enabled by default]
+------------------------
+  Nothing to say, just remember to include <stdlib.h>. However it's fine if you don't include it, since the compiler will treat exit() function as built-in function and enabled it by default.
+
+========================
+make warning: ‘gets’ is deprecated  [-Wdeprecated-declarations]
+------------------------
+This is because there are better options than gets() that we’ll discuss later, and the compiler wants to discourage us from using gets() in general.
+
+If the warnings bother you, add the -Wno-deprecated-declarations option to your gcc command.
+
+from  www.sec.in.tum.de
