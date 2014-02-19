@@ -1,0 +1,49 @@
+Fedora 20 installation on Lenovo yoga 13 guide.
+   by Yuqi Liu.
+
+Since Lenovo yoga 13 has a relatively new hardware set, and Linux kernel doesn't support new hardware quite well, we have to make some additional changes when and after installation to make it work.
+
+1. Lenovo yoga 13 is a UEFI enabled device. We first have to enable legacy mode on it in "BIOS" before installation (or else the bootable media is unbootable, let's say you're installing it from a bootable flash drive). Set legacy device boot first, and disable optimization for windows 8.
+
+2. During installation, feel free to remove all the existing partitions IF you don't want windows 8 anymore (the image file for one-key recovery is in one of those partitions).
+
+3. After installation, reboot, and you quickly find it has no network connection. This is because Linux kernel 3.11 doesn't support the network device for yoga 13 yet. We have to download the driver and compile in our own machine. Sadly enough, Fedora has no gcc built in, so we have to install gcc even before that. My way is to build a local software package repository. Download a DVD image of the same version of your installed fedora using another computer, and copy that image to the target laptop. Mount the image as a disk device:
+    $ mkdir /home/YourUserName/dvd/
+    $ sudo mount -t iso9660 /home/YourUserName/Fedora-20-i386-DVD.iso /home/YourUserName/dvd/
+
+  Then, revise the repository configuration file:
+    $ cd /etc/yum.repos.d/
+  Back up the original configuration files by move them into a different directory, and create our local configuration file:
+    $ vim fedora.repo
+  Insert the following lines to make it work:
+    [fedora]
+    name = fedora
+    baseurl = file:///home/YourUserName/dvd/repodata/
+    enabled = 1
+    gpgcheck = 0
+  Save and exit. Type the following commands to make our local repository work:
+    $ sudo yum clean all
+    $ sudo yum makecache
+  Then install the packages you need to build our driver:
+    $ sudo yum install kernel-devel gcc
+
+
+4. Download the source code for our driver (for other brands, you need to search for your own driver on the internet):
+     https://github.com/lwfinger/rtl8723au
+   Unzip and follow the directions in README.md
+
+5. Network is ready! Then the problem is adjustment of screen brightness. To enable that, you can change the grub configuration file. Open /boot/grub2/grub.cfg, and find the lines like
+      linux   /vmlinuz-3.11.10-301.fc20.i686 root=/dev/sda4 ro vconsole.font=latarcyrheb-sun16  rhgb quiet LANG=en_US.UTF-8
+   Add "acpi_backlight=vendor" to that:
+      linux   /vmlinuz-3.11.10-301.fc20.i686 root=/dev/sda4 ro vconsole.font=latarcyrheb-sun16  rhgb quiet LANG=en_US.UTF-8 acpi_backlight=vendor
+
+   Then reboot. Now everything is ready~
+
+6. You might need to enlarge the fonts and icons, because yoga 13 has a 1600*900 resolution screen, which makes fonts and icons too small to read in the original configuration. This can be done using compiz or the like.
+
+Enjoy Fedora 20!
+
+================
+additional notes
+
+* install man-pages in yum to enable full man page.

@@ -1,0 +1,10 @@
+Jan 28, 2014.
+Shijiazhuang, Hebei, CN
+
+Pintos Installation on Fedora 20
+
+Everything is different on Fedora 20!
+
+If I try to compile the code for bochs, it no longer works, leaving me the "flash screen" problem. To prevent the problem, I chose to install it using the software source, via "yum install bochs bochs-gdb". However, I sacrifice the right to debug using gdb, for bochs-gdb doesn't work as we wished, and if you want gdb enabled in bochs-pintos, you must compile the source code with gdb enabled and install bochs.
+
+Also, in compiling the squish-pty of pintos, we can no longer find the stropts.h and xtitypes.h in any software packages provided by the software repository of Fedora. I had to search the two head files on the internet and download them to the corresponding directories of my local drive.

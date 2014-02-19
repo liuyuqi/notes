@@ -1,0 +1,33 @@
+Jan 28, 2014.
+Shijiazhuang, Hebei, CN.
+
+Finally, I finished alarm-clock, which was expected to have finished three days ago... Basically because I met with a weird problem this time (and because I went out to meet my old friends).
+
+When I judge whether or not to wake up a thread in thread_try_wakeup in thread.c, I declared several variables in struct thread:
+  [new members in struct thread]
+    bool sleeping;       /*if 1, the thread is sleeping (alarm_clock)*/
+    int64_t sleep_start_time;
+    int64_t sleep_duration;
+
+Then, when a timer interrupt arrives, the threshold of waking up a thread was:
+  if (t->sleeping==true && (t->sleep_start_time + t->sleep_duration >= timer_ticks() )) then wake up.
+
+However, when I run "make check", an error occurred. All of the test threads are waken up by my own implemented output, but the pintos test script outputs differently, so I never passed the alarm tests. Like:
+  (alarm-single) thread 0: duration=10, iteration=1, product=10
+  (alarm-single) thread 1: duration=20, iteration=1, product=20
+  (alarm-single) thread 2: duration=30, iteration=1, product=30
+  (alarm-single) thread 3: duration=40, iteration=1, product=40
+  (alarm-single) FAIL: thread 4 woke up 0 times instead of 1
+  Kernel PANIC at ../../tests/threads/tests.c:93 in fail(): test failed
+  Call stack: 0xc002810e.
+
+If I substitute the condition judgment with:
+  if (t->sleeping==true && (timer_elapsed(t->sleep_start_time) >= t->sleep_duration ))
+
+  using timer_elapsed() function, test successfully passed. Weird enough!!!
+
+
+Notes:
+  The wrong code can be seen at https://github.com/liuyuqi/pintos-freshstart/blob/f3a07cbc789e8dff27c95a3d455bb6e84dfc6dbd/src/threads/thread.c, and my correct one can be seen at https://github.com/liuyuqi/pintos-freshstart/blob/master/src/threads/thread.c
+
+

@@ -1,0 +1,9 @@
+========================
+segmentation fault:
+----------
+  some pointers need to be initialized before being used in a function.
+   Wrong: struct stat *stat_buf;
+          fstat (fd_read, stat_buf);
+
+   Correct: struct stat stat_buf;
+            fstat (fd_read, &stat_buf);

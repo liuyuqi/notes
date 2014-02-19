@@ -1,0 +1,16 @@
+Feb 8, 2014, Gore 103, University of Delaware
+Web of Science
+William Simpson from UD lib, Amy Braden from Thomson Reuters
+
+
+what is web of science: a platform for scholar research.
+
+core collection: citation... bibliograpy...
+
+wildcard characters: $ means 0 or 1.
+
+proximity operators.
+  put quotation marks over phrase terms. "electromegnetic field" != electromegnetic AND field.
+  Near/3
+ 
+make use of the NOT operator 
