@@ -42,3 +42,6 @@ vim_tips: some basic tips in vim to enhance productivity.
     zD    #delete ALL folds.
     zj    #move to last fold.
     zk    #move to next fold.
+
+* tabs
+    :tabedit filename    #add a new tab for filename
