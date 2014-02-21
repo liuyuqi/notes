@@ -1,0 +1,44 @@
+vim_tips: some basic tips in vim to enhance productivity.
+*every time you need help:
+    [esc] :help    #This will open the help menu
+    ctrl + ]   #to enter a help tag
+    ctrl + T   #to return to previous status
+
+* opening multi-files at start time: 
+    vim -o file1 file2   #This will start two window, one top one bottom.
+    vim -O file1 file2   #This will do one left, one right.
+
+* opening new existing files:
+    [esc] :new exist_file
+  or open new empty file:
+    [esc] :new
+
+* Shift among windows:
+    ctrl + h/j/k/l  #h=left, j=up, k=down, l=right.
+  or
+    ctrl + W, h/j/k/l
+
+* Change the position of the current window:
+    ctrl + W, H/J/K/L
+
+* need to switch to shell environment:
+    [esc] :sh   #This will temporarily quit vim and start a new shell session.
+    exit        #This will quit the shell and go back to vim.
+
+* run a command with a shell:
+    [esc] :! command %    # "%" means the current file.
+    #hit ENTER to return to vim.
+
+* manual folding
+    :set foldmethod=manual
+    zf    #in visual mode, select lines to fold.
+    zo    #to open the fold.
+    zc    #to close the fold, (fold again).
+    zr    #open all folds.
+    zR    #open all folds recursively.
+    zm    #close all folds.
+    zM    #close all folds recursively.
+    zd    #delete current fold.
+    zD    #delete ALL folds.
+    zj    #move to last fold.
+    zk    #move to next fold.
