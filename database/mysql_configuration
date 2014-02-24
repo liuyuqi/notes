@@ -1,0 +1,21 @@
+mysql_configuration: some tips on configuring mysql, installation included.
+
+INSTALLATION:
+    yum install mysql mysql-server
+    service mysqld start
+
+CONFIGURATION:
+1. user and passwd.
+    CREATE USER 'liuyuqi'@'localhost' IDENTIFIED BY 'mypasswd';
+
+USE:
+1. (For db administrator) Create database: this must be done by root.
+    > create database youkee;
+    
+2. (For db administrator) Grant access to users.
+    > grant all on youkee.* to 'liuyuqi'@'localhost';
+
+3. (For user) Change database.
+    > use youkee
+
+4. Enjoy database work as user liuyuqi!
