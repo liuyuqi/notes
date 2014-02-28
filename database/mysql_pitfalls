@@ -1,0 +1,15 @@
+MySQL Pitfalls
+
+1. Error 1005 cannot create table (errno: 150)
+
+  A. From MySQL website: table creation failed because a foreign key constraint was not correctly formed. 
+  B. Reasons can be:
+     a. spelling mistake of colomn name of foreign fields;
+     b. MySQL enforces ordering of columns when using foreign key... This is said to reduce query time. So we have to add index(foreign_key) to use that. e.g.
+        (in the syntax of building new tables:)
+        ......
+        index (foreign_key_name),
+        ......
+
+        (out of building new tables:)
+        alter table table_name add index (foreign_key_name);
