@@ -1,0 +1,5 @@
+========================================================
+About EOF and Enter
+---------------------
+The ASCII code for Enter in Linux is 10.
+EOF is defined as -1.

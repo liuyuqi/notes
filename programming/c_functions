@@ -1,0 +1,7 @@
+=======================
+fgets()
+--------------
+This function gets a line from a file, ends with enter or EOF.
+*** This is tricky, because it stores the enter (namely '\n' or 10) at last before '\0'.
+*** We have to modify char[strlen(char) - 1] = '\0' before we get the correct output!!!
+
