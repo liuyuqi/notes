@@ -4,8 +4,7 @@ vim_tips: some basic tips in vim to enhance productivity.
     ctrl + ]   #to enter a help tag
     ctrl + T   #to return to previous status
 
-* opening multi-files at start time: 
-    vim -o file1 file2   #This will start two window, one top one bottom.
+* opening multi-files at start time: vim -o file1 file2   #This will start two window, one top one bottom.
     vim -O file1 file2   #This will do one left, one right.
 
 * opening new existing files:

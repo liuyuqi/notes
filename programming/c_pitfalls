@@ -23,3 +23,44 @@ This is because there are better options than gets() that we’ll discuss later,
 If the warnings bother you, add the -Wno-deprecated-declarations option to your gcc command.
 
 from  www.sec.in.tum.de
+
+========================
+make error: subscripted value is neither array nor pointer nor vector
+------------------------
+This looks like a stupid question.
+The sample wrong code looks like this:
+
+  char* a, b;
+  b = (char*)malloc(10*sizeof(char));
+  b[9] = '\0';
+
+Then comes the mistake.
+The reason is that, I wanted to declare b as a char pointer, but actually I declared it as a char variable. Instead of writing like:
+  char* a, b;
+I should have written:
+  char *a, *b;
+
+and This is so silly!!!
+
+=======================
+after fork(), parent process becomes child too!!!
+-----------------------
+This is a silly problem... In the program, I wrote:
+
+if (pid=fork() < 0) {A}
+else if (pid == 0) {
+  execve()...
+}
+
+Then I found the parent process became child, and executed the code of child too!!!
+Why is this happening?
+We can add parenthesis to make it clear:
+
+if (pid = (fork() < 0) ) {A}
+......
+
+Actually, I made a mistake here... to correct it,
+
+if ( (pid=fork()) < 0 ) {A}
+
+Done......

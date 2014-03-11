@@ -13,3 +13,11 @@ MySQL Pitfalls
 
         (out of building new tables:)
         alter table table_name add index (foreign_key_name);
+
+
+2. Failure to delete foreign key constraints.
+   a. Check the constraint name of the foreign key
+       show create table table_name;
+   b. Then delete the foreign key by the constraint name:
+       alter table table_name drop foreign key prereq_ibfk_1;
+
