@@ -64,3 +64,14 @@ Actually, I made a mistake here... to correct it,
 if ( (pid=fork()) < 0 ) {A}
 
 Done......
+
+=======================
+string problem
+---------------------
+statement:
+    if(last_dir == "") .....
+
+well, last_dir is a char pointer.
+Should use strcmp() instead:
+
+    if (strcmp(last_dir, "") == 0) ...
