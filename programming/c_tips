@@ -3,3 +3,8 @@ About EOF and Enter
 ---------------------
 The ASCII code for Enter in Linux is 10.
 EOF is defined as -1.
+
+========================================================
+Strictly check whether pointers are handled good
+---------------------
+When compiling, pass -lmcheck to perform strict checks.

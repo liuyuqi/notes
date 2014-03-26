@@ -75,3 +75,10 @@ well, last_dir is a char pointer.
 Should use strcmp() instead:
 
     if (strcmp(last_dir, "") == 0) ...
+
+=======================
+execve() failed: bad address space
+----------------------
+The argv pointer passed to execve() must have a NULL value at last, namely:
+    argv[argc] = NULL;
+must be satisfied!
