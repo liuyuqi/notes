@@ -1,0 +1,20 @@
+just put some output here to illustrate the way to process strings:
+
+[liuyuqi@localhost normalData]$ python3.3
+Python 3.3.2 (default, Nov  7 2013, 10:01:52) 
+[GCC 4.8.1 20130814 (Red Hat 4.8.1-6)] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> str = "abc\td\te\t\tf\n"
+>>> str
+'abc\td\te\t\tf\n'
+>>> import re
+>>> re.split('\t', str)
+['abc', 'd', 'e', '', 'f\n']
+>>> re.split(r'\t', str)
+['abc', 'd', 'e', '', 'f\n']
+>>> re.split(r'\t+', str)
+['abc', 'd', 'e', 'f\n']
+>>> re.split(r'\t+', str.strip())
+['abc', 'd', 'e', 'f']
+
+==================================================
