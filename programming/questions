@@ -1,0 +1,16 @@
+===========================
+Static global variables
+------------------------
+This is from OS project phase 4. The original buggy program implementation is this:
+
+############code start##########
+static mbox *global_mbox;
+...
+global_mbox = (mbox*)malloc(sizeof(mbox));
+...
+mbox* g = blobal_mbox;
+assert(g);
+############code end############
+
+I got an assertion failure...
+
