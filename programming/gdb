@@ -1,0 +1,12 @@
+===============================================
+gdb not displaying line numbers
+------------------------------------
+I added the parameter "-g" to add debugging information,
+however, it is not actually used.
+
+Instead of saying
+   FLAGS = -g
+we should say
+   CFLAGS = -g
+
+or else gcc will not recognize it.
