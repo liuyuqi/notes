@@ -1,0 +1,17 @@
+====================================
+Get the index of an array:
+---------------------
+Wrong code:
+  import java.util.Arrays;
+  int[] inorder = {1, 2};
+  int pos = Arrays.asList(inorder).indexOf(2);
+
+Result:
+  pos = -1; // This means it never occrurred.
+
+Reason:
+  the indexOf method returns the occurrence position of a character in a string. Our array is not a string...
+
+Solution:
+  write an iteration function yourself...
+====================================
