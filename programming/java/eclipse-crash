@@ -1,0 +1,6 @@
+==============================================
+The effective way to fix eclipse crashes
+-------------------------
+1. (As most people suggested): use Oracle jdk, instead of openjdk.
+2. (Effective as I tried): add the following line to eclipse.ini:
+        -Dorg.eclipse.swt.browser.DefaultType=mozilla"
