@@ -1,0 +1,18 @@
+ANDROID ENVIRONMENT SETUP
+==================================
+1. Download sdk;
+2. Set PATH to sdk/tools, sdk/platform-tools;
+     (modify PATH variable in ~/.bashrc, source .bashrc, export PATH)
+3. Install API from sdk/platform-tools/android; Need to install system images too;
+4. Open Virtual Device Manager, Create new device;
+5. Run 'emulator @nexus4' to start. (nexus4 is name of the virtual device);
+
+
+BUILDING APPLICATION
+==================================
+1. Download source code;
+2. edit local.properties file, set sdk.dir;
+3. type 'ant release' to build;
+4. Start the emulator 'emulator @nexus4';
+5. Enter 'bin' directory, type 'adb install xxx.apk'
+6. Type 'ant clean' to clean the build.
