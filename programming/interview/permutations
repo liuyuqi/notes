@@ -1,0 +1,46 @@
+Description:
+
+Given a collection of numbers, return all possible permutations.
+
+For example,
+[1,2,3] have the following permutations:
+[1,2,3], [1,3,2], [2,1,3], [2,3,1], [3,1,2], and [3,2,1].
+
+======================================
+Thoughts:
+
+Since the size of the collection can be large, iterative solution can seem hard. Therefore recursion is easier.
+
+Note that in Python, lst.append(obj) returns None! Have to do that separately:
+   newLst = lst[:]
+   newLst.append(obj)
+   callFunction(newLst)
+
+
+=======================================
+Code (Python, Recursion):
+-----------------------------
+class Solution:
+    # @param num, a list of integer
+    # @return a list of lists of integers
+    def permute(self, num):
+        answers = []
+        partList = []
+        self.permuteRecursive(num, partList, answers)
+        return answers
+    
+    def permuteRecursive(self, numList, partList, answers):
+        # note that numList reduces as the recurse goes deeper
+        numListLen = len(numList)
+        
+        if numListLen == 1:
+            partList.append(numList[0])
+            answers.append(partList)
+            return
+        
+        for idx in range(numListLen):
+            partListTmp = partList[:]
+            partListTmp.append(numList[idx])
+            self.permuteRecursive(numList[0:idx]+numList[idx+1:numListLen], 
+                                partListTmp, answers)
+            

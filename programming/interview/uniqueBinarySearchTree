@@ -1,0 +1,71 @@
+Thoughts:
+
+Take one of the node as the root, and the number of unique BSTs = number of unique BST with nodes on the left * num of ... on the right.
+Then we found the subproblems to DP with.
+
+A. iterative DP: since such problems with larger n always needs the result from the same problem with smaller n, we just calculate and store the result of such problems from the smallest n all the way up.
+
+B. Recursive DP: Can save some time, yet not very clear, and may be hard to optimize.
+
+
+==============================================
+Code (Java, Iterative DP):
+------------------------------
+public class Solution {
+    public int numTrees(int n) {
+        int[] records = new int[n];
+        for (int i = 0; i <= n-1; i++) {
+            records[i] = getNumOfTrees(records, i);
+        }
+        return getNumOfTrees(records, n);
+    }
+    
+    public static int getNumOfTrees(int[] records, int n) {
+        if (n == 0 || n == 1) {
+            return 1;
+        } else {
+            int index, leftCnt, rightCnt, total = 0;
+            for (index = 1; index <= n; index++) {
+                leftCnt = index-1;
+                rightCnt = n - index;
+                total += records[leftCnt] * records[rightCnt];
+            }
+            return total;
+        }
+    }
+}
+
+
+===============================================
+Code (Java, Recursive DP):
+------------------------------
+public class Solution {
+    public int numTrees(int n) {
+        int[] records = new int[n+1];
+        for (int i = 0; i < n+1; i++) {
+            records[i] = 0;
+        }
+
+        return getNumOfTrees(records, n);
+    }
+    
+    public static int getNumOfTrees(int[] records, int n) {
+        if (records[n] != 0)
+            return records[n];
+        if (n == 0 || n == 1) {
+            records[n] = 1;
+            return 1;
+        }
+        
+        int leftCnt, rightCnt, total = 0;
+        for (int i = 1; i <= n; i++) {
+            leftCnt = i - 1;
+            rightCnt = n - i;
+            total += getNumOfTrees(records, leftCnt) * getNumOfTrees(records, rightCnt);
+        }
+        records[n] = total;
+        return total;
+    }
+}
+
+

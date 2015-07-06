@@ -1,0 +1,100 @@
+Problem Description:
+
+Given a complete binary tree, count the number of nodes.
+
+Definition of a complete binary tree from Wikipedia:
+In a complete binary tree every level, except possibly the last, is completely filled, and all nodes in the last level are as far left as possible. It can have between 1 and 2h nodes inclusive at the last level h.
+
+================================================================
+Thoughts:
+
+Given a complete binary tree of height N, the number of nodes in the tree except in the bottom level is 2^N-1. All we have to do is locate the last node in the bottom row and calculate the number of it.
+
+Locating can be easy, since we can always check the min height and the max height of a subtree. However, calculating the number of the bottom row can be troublesome, as we have no idea of how many nodes are contained in a subtree.
+
+As we located the farthest right node, We can simulate a binary search. First, we start from the root node, and the range of the index of bottom nodes can be [1, 2^N]. As we kept track of the path (whether to go left, or right), we can narrow it down by going down the tree.
+
+================================================================
+Code (binary search, iteration, Python):
+--------------------------------------------------
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution:
+    # @param {TreeNode} root
+    # @return {integer}
+    def countNodes(self, root):
+        if root is None:
+            return 0
+        
+        pathList = [] # 0 denotes left, 1 denotes right.
+        currNode = root
+        
+        while True:
+            leftNode = currNode.left
+            rightNode = currNode.right
+            (leftBalanced, leftDepth) = self.getSubTreeInfo(leftNode)
+            (rightBalanced, rightDepth) = self.getSubTreeInfo(rightNode)
+            
+            if leftBalanced == rightBalanced:
+                if leftDepth != rightDepth: # divide in the middle
+                    pathList.append(0)
+                    currNode = currNode.left
+                else: # divide all the way to the right
+                    tailList = [1]*rightDepth
+                    pathList.extend(tailList)
+                    break
+                
+            elif leftBalanced == False: # go left
+                pathList.append(0)
+                currNode = currNode.left
+                
+            elif rightBalanced == False: # go right
+                pathList.append(1)
+                currNode = currNode.right
+                
+            if leftDepth == 0 or rightDepth == 0:
+                break
+        
+        return self.getCount(pathList)
+    
+    # return a tuple (balancedBool, maxDepth)
+    def getSubTreeInfo(self, root):
+        leftDepth = 0
+        rightDepth = 0
+        currNode = root
+        while currNode is not None:
+            currNode = currNode.left
+            leftDepth += 1
+        currNode = root
+        while currNode is not None:
+            currNode = currNode.right
+            rightDepth += 1
+            
+        if leftDepth != rightDepth:
+            balancedBool = False
+        else:
+            balancedBool = True
+        
+        maxDepth = max(leftDepth, rightDepth)
+        return (balancedBool, maxDepth)
+    
+    # return the number of nodes
+    def getCount(self, pathList):
+        if len(pathList) == 0:
+            return 1
+        total = 0
+        start = 1
+        end = 2 ** len(pathList)
+        height = len(pathList)
+        for nextMove in pathList:
+            if nextMove == 0:
+                end -= 2 ** (height - 1)
+            else:
+                start += 2 ** (height - 1)
+            height -= 1
+        return 2 ** len(pathList) -1 + end

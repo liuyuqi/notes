@@ -1,0 +1,45 @@
+Description:
+
+Implement int sqrt(int x).
+
+Compute and return the square root of x.
+
+================================================
+Thoughts:
+
+Use binary sort for this.
+
+Notice that when implementing binary sort, always assign the current search value to the boundary value, and after that it's the chance to calculate the new search value. Don't mix this up!
+
+Don't have to make two boundarys meet. It's okay to jump out of the loop when the two boundaries differ by one.
+
+In order to prevent potential overflow, use larger data types.
+
+================================================
+Code (C++, binary sort):
+-------------------------------
+class Solution {
+public:
+    int sqrt(int x) {
+        long root = 0, small = 0, large = x;
+        long long result;
+        while (large - small > 1) {
+            result = root * root;
+            if (result == x) {
+                return root;
+            } else if (result > x) {
+                large = root;
+                root = (small+large)/2;
+            } else {
+                small = root;
+                root = (small+large)/2;
+            }
+        }
+        
+        if (large * large == x) {
+            return large;
+        } else {
+            return small;
+        }
+    }
+};

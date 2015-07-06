@@ -1,0 +1,72 @@
+Thoughts:
+
+1. Recursion is still the best way to solve.
+2. However, need to create a new array for every recursive function call. Arrays are passed by reference in Java, and if an array is passed in different recursive functions, it may garble and become a total mess.
+
+
+========================================
+Program:
+---------------------------------
+public class Solution {
+    public void initOccupiedArray(boolean[][] occupied, int leni, int lenj) {
+        for (int i = 0; i < leni; i++) {
+            for (int j = 0; j < lenj; j++) {
+                occupied[i][j] = false;
+            }
+        }
+    }
+    
+    public boolean exist(char[][] board, String word) {
+        if (board.length == 0)
+            return false;
+        if (word.length() == 0)
+            return true;
+        
+        int leni, lenj, i, j, wordIndex;
+        leni = board.length;
+        lenj = board[0].length;
+        boolean[][] occupied = new boolean[leni][lenj];
+        
+        for (i = 0; i < leni; i++) {
+            for (j = 0; j < lenj; j++) {
+                if (board[i][j] == word.charAt(0)) {
+                    initOccupiedArray(occupied, leni, lenj);
+                    if (search(board, occupied, word, i, j, 0) == true)
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    public boolean search(char[][] board, boolean[][] occupiedOld, String word, int i, int j, int wordIndex) {
+        int leni = board.length;
+        int lenj = board[0].length;
+        boolean[][] occupied = new boolean[leni][lenj];
+        for (int a = 0; a < leni; a++) {
+            for (int b = 0; b < lenj; b++) {
+                occupied[a][b] = occupiedOld[a][b];
+            }
+        }
+        
+        if (i < 0 || i >= leni || j < 0 || j >= lenj || occupied[i][j] == true)
+            return false;
+        if (word.charAt(wordIndex) == board[i][j]) {
+            occupied[i][j] = true;
+            if (wordIndex == word.length() - 1) {
+                return true;
+            } else {
+                if (search(board, occupied, word, i+1, j, wordIndex+1) == true ||
+                        search(board, occupied, word, i, j+1, wordIndex+1) == true ||
+                        search(board, occupied, word, i-1, j, wordIndex+1) == true ||
+                        search(board, occupied, word, i, j-1, wordIndex+1) == true ) {
+                            return true;
+                } else {
+                    return false;
+                }
+            }
+        } else {
+            return false;
+        }
+    }
+}

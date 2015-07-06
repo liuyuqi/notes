@@ -1,0 +1,113 @@
+Problem Description:
+
+ Given a 2D board containing 'X' and 'O', capture all regions surrounded by 'X'.
+
+A region is captured by flipping all 'O's into 'X's in that surrounded region.
+
+For example,
+
+X X X X
+X O O X
+X X O X
+X O X X
+
+After running your function, the board should be:
+
+X X X X
+X X X X
+X X X X
+X O X X
+
+
+===========================================================
+Thoughts:
+
+1. Can use BFS: in outer loop, do a i-j iteration. Whenever a 'O' is found, do a BFS to find all neighboring 'O's. If any 'O' is at the edge, none of the 'O' in the neighborhood should not be flipped to 'X'.
+   Should maintain a currentList, a foundList and a edgeList to get along with the iteration process.
+   NOTE that in order not to make Time Limit Excceeded, currentList should be a DEQUE, foundList and edgeList should be a dict.
+   
+2. Or, can iterate the matrix from the outer edge inwards...
+
+
+===========================================================
+Code (thought 1, iteration, BFS, Python):
+-------------------------------------------
+import collections
+class Solution:
+    # @param {character[][]} board
+    # @return {void} Do not return anything, modify board in-place instead.
+    def solve(self, board):
+        foundDict = {} # members in the dict are found in the current search
+        currList = collections.deque([]) # a list maintaining the search process
+        isSurrounded = True # bool value to indicate whether a flipping is needed.
+        
+        numRows = len(board)
+        if numRows == 0:
+            return
+        numCols = len(board[0])
+        
+        for row in range(numRows):
+            for col in range(numCols):
+                #print ("checking board[%d][%d]" % (row, col))
+                if board[row][col] == 'X' or board[row][col] == 'E':
+                    continue
+                # slot is 'O' now.
+                else:
+                    isSurrounded = True
+                    currList.append((row, col))
+                    foundDict[(row, col)] = 1
+                    while len(currList) > 0:
+                        #print ("currList is now: ")
+                        #print currList
+                        currRow, currCol = currList.popleft()
+                        if currRow == 0 or currRow == numRows-1 or currCol == 0 or currCol == numCols-1:
+                            isSurrounded = False
+                        newNeighbors = self.getNeighbors(board, numRows, numCols, currRow, currCol, foundDict)
+                        currList.extend(newNeighbors)
+                        for n in newNeighbors:
+                            foundDict[n] = 1
+                    # foundDict is now filled with locations of all 'O's 
+                    if isSurrounded == True:
+                        self.flip(board, foundDict)
+                    else:
+                        for x_y_pair in foundDict.keys():
+                            r = x_y_pair[0]
+                            c = x_y_pair[1]
+                            board[r][c] = 'E'
+                            
+                    foundDict.clear()
+                    currList.clear()
+                    
+        for row in range(numRows):
+            for col in range(numCols):
+                if board[row][col] == 'E':
+                    board[row][col] = 'O'
+                    
+    
+    # return a list of [row][col]'s neighbors.
+    def getNeighbors(self, board, numRows, numCols, row, col, foundDict):
+        neighborList = []
+        if self.check(board, numRows, numCols, row-1, col) == True and not foundDict.has_key((row-1, col)):
+            neighborList.append((row-1, col))
+        if self.check(board, numRows, numCols, row+1, col) == True and not foundDict.has_key((row+1, col)):
+            neighborList.append((row+1, col))
+        if self.check(board, numRows, numCols, row, col-1) == True and not foundDict.has_key((row, col-1)):
+            neighborList.append((row, col-1))
+        if self.check(board, numRows, numCols, row, col+1) == True and not foundDict.has_key((row, col+1)):
+            neighborList.append((row, col+1))
+        return neighborList
+        
+    # return True if position is valid and is 'O'. Otherwise return False
+    def check(self, board, numRows, numCols, row, col):
+        if row < 0 or row >= numRows or col < 0 or col >= numCols:
+            return False
+        if board[row][col] == 'X':
+            return False
+        return True
+    
+    # flips the points in foundList in position.
+    def flip(self, board, foundDict):
+        for x_y_pair in foundDict.keys():
+            x = x_y_pair[0]
+            y = x_y_pair[1]
+            board[x][y] = 'X'

@@ -1,0 +1,40 @@
+Description:
+
+You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed, the only constraint stopping you from robbing each of them is that adjacent houses have security system connected and it will automatically contact the police if two adjacent houses were broken into on the same night.
+
+Given a list of non-negative integers representing the amount of money of each house, determine the maximum amount of money you can rob tonight without alerting the police.
+
+=================================================
+Thoughts:
+
+Given position n, we do not necessarily have to rob house[n-2] to achieve the maximum. Can also rob house[n-3]. But only robbing house[n-4] without robbing house[n-2] is guarenteed to not achieve the maximum.
+
+In this way, we might need to give up some dynamic programming records (when records[n-1] > records[n]).
+
+=================================================
+Code (Iterative DP, C++):
+------------------------------------
+class Solution {
+public:
+    int rob(vector<int> &num) {
+        int length = num.size();
+        if (length == 0)
+            return 0;
+            
+        int records[length];
+        for (int i = 0; i < length; i++) {
+            records[i] = 0;
+        }
+        
+        records[0] = num[0];
+        records[1] = (num[0] > num[1]) ? num[0] : num[1];
+        for (int i = 2; i < length; i++) {
+            records[i] = records[i-2] + num[i];
+            if (records[i] < records[i-1])
+                records[i] = records[i-1];
+        }
+        
+        return records[length-1];
+
+    }
+};

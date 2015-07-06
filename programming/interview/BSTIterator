@@ -1,0 +1,88 @@
+Thoughts:
+
+1. An iterator needs STATES, so needs to record its states at any time;
+
+2. Since it is an iterator of a BST, an in-order traversal is needed. Thus need a stack to record STATES;
+
+3. What state do we need:
+    a. A stack;
+    b. The top element of the stack (can use a variable to preserve it).
+
+4. What does the top element of the stack mean:
+    the next number to return in the iterator.
+    
+5. How to write functions: recursion is first considered. However, it is recursion based with STATES;
+
+
+=========================================
+Code:
+-------------------------------------
+/**
+ * Definition for binary tree
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+
+public class BSTIterator {
+    TreeNode nextNode = null;
+    Stack<TreeNode> st;
+    
+    public TreeNode chainPush(TreeNode n, Stack<TreeNode> s) {
+        TreeNode parent = n;
+        while(n != null) {
+            s.push(n);
+            parent = n;
+            n = n.left;
+        }
+        return parent;
+    }
+    
+    public BSTIterator(TreeNode root) {
+        st = new Stack<TreeNode>();
+        nextNode = chainPush(root, st);
+    }
+
+    /** @return whether we have a next smallest number */
+    public boolean hasNext() {
+        if (nextNode != null)
+            return true;
+        else
+            return false;
+    }
+
+    /** @return the next smallest number */
+    public int next() {
+        int nextValue = nextNode.val;
+        nextNode = chainPop(nextNode, st);
+        return nextValue;
+    }
+    
+    public TreeNode chainPop(TreeNode n, Stack<TreeNode> s) {
+        if (n.right != null) {
+            return chainPush(n.right, s);
+        } else {
+            return chainPopNoPush(n, s);
+        }
+    }
+    
+    public TreeNode chainPopNoPush(TreeNode n, Stack<TreeNode> s) {
+        s.pop();
+        if (s.empty())
+            return null;
+        if (s.peek().left == n) {
+            return s.peek();
+        } else {          // in this case, s.peek().right == n. Rubbish java...
+            return chainPopNoPush(s.peek(), s);
+        }
+    }
+}
+
+/**
+ * Your BSTIterator will be called like this:
+ * BSTIterator i = new BSTIterator(root);
+ * while (i.hasNext()) v[f()] = i.next();
+ */

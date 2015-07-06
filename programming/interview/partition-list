@@ -1,0 +1,66 @@
+Thoughts:
+
+1. Preserve as good as I can.
+2. For linked list problems, always try to add NULL wherever needed. Don't be lazy, otherwise infinite loops are on the way...
+
+
+
+======================================
+Descriptions:
+--------------------------
+Given a linked list and a value x, partition it such that all nodes less than x come before nodes greater than or equal to x.
+
+You should preserve the original relative order of the nodes in each of the two partitions.
+
+For example,
+Given 1->4->3->2->5->2 and x = 3,
+return 1->2->2->4->3->5.
+
+======================================
+Codes:
+--------------------------
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode *partition(ListNode *head, int x) {
+        ListNode *headOfSmall = NULL, *tailOfSmall = NULL, *headOfLarge = NULL, *tailOfLarge = NULL, *curr = head, *next = NULL;
+        while(head == NULL || head->next == NULL)
+            return head;
+        
+        while (curr != NULL) {
+            next = curr->next;
+            if (curr->val < x) {
+                if (headOfSmall == NULL) {
+                    headOfSmall = tailOfSmall = curr;
+                } else {
+                    tailOfSmall->next = curr;
+                    tailOfSmall = curr;
+                }
+                tailOfSmall->next = NULL;
+            } else {
+                if (headOfLarge == NULL) {
+                    headOfLarge = tailOfLarge = curr;
+                } else {
+                    tailOfLarge->next = curr;
+                    tailOfLarge = curr;
+                }
+                tailOfLarge->next = NULL;
+            }
+            curr = next;
+        }
+        
+        if (tailOfSmall != NULL) {
+            tailOfSmall->next = headOfLarge;
+            return headOfSmall;
+        } else {
+            return headOfLarge;
+        }
+    }
+};

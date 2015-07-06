@@ -1,0 +1,44 @@
+=========================================
+Problem Description
+----------------------------
+
+Find the contiguous subarray within an array (containing at least one number) which has the largest product.
+
+For example, given the array [2,3,-2,4],
+the contiguous subarray [2,3] has the largest product = 6.
+
+=========================================
+Thoughts:
+----------------------------
+(copied from solution) Besides keeping track of the largest product, we also need to keep track of the smallest product. Why? The smallest product, which is the largest in the negative sense could become the maximum when being multiplied by a negative number.
+
+maxProduct = max (A[n], maxProduct*A[n], minProduct*A[n]);
+minProduct = min (A[n], maxProduct*A[n], minProduct*A[n]);
+
+These two lines of program keeps track of the largest product in absolute value, while "removing the history records" when necessary. If there's a 0 in the array, such case can be easily handled.
+
+When implementing the program, keep an eye on the variables. Needs a temperory variable to keep track of the old maxProduct.
+
+=========================================
+Code (C, iterative DP):
+-------------------------------
+int getMax(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+int getMin(int a, int b) {
+    return (a < b) ? a : b;
+}
+
+int maxProduct(int A[], int n) {
+    int max = A[0], min = A[0], i, result = A[0], temp;
+    
+    for (i = 1; i < n; i++) {
+        temp = max;
+        max = getMax(A[i], getMax(max*A[i], min*A[i]));
+        min = getMin(A[i], getMin(temp*A[i], min*A[i]));
+        if (max > result)
+            result = max;
+    }
+    return result;
+}

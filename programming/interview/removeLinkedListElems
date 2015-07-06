@@ -1,0 +1,89 @@
+Description:
+
+Remove all elements from a linked list of integers that have value val.
+
+Example
+Given: 1 --> 2 --> 6 --> 3 --> 4 --> 5 --> 6, val = 6
+Return: 1 --> 2 --> 3 --> 4 --> 5 
+
+=====================================================
+Thoughts:
+
+1. Can use recursive design (like in lisp). Function return the next pointer.
+
+2. Recursive functions can overflow. This is the time to consider using iterative design: 
+    A. find the new head: remove head node until current head node's value is not input value;
+    B. Do the loop in a two-pointer iterative manner.
+
+=====================================================
+Code 1 (Recursion, Python, got runtime error, but should work):
+---------------------------------------------
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution:
+    # @param {ListNode} head
+    # @param {integer} val
+    # @return {ListNode}
+    def removeElements(self, head, val):
+        if head == None:
+            return None
+        if head.val == val:
+            return self.removeElements(head.next, val)
+        head.next = self.removeElements(head.next, val)
+        return head
+        
+=============================================================
+Code 2 (recursion, C, accepted):
+--------------------------------------
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     struct ListNode *next;
+ * };
+ */
+struct ListNode* removeElements(struct ListNode* head, int val) {
+    if (head == NULL) {
+        return NULL;
+    }
+    if (head->val == val) {
+        return removeElements(head->next, val);
+    }
+    head->next = removeElements(head->next, val);
+    return head;
+}
+
+========================================================
+Code 3 (iteration, Python):
+-----------------------------------------------
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution:
+    # @param {ListNode} head
+    # @param {integer} val
+    # @return {ListNode}
+    def removeElements(self, head, val):
+        while head != None and head.val == val:
+            head = head.next
+            
+        currNode = head
+        nextNode = None
+        
+        while currNode != None:
+            nextNode = currNode.next
+            if nextNode == None:
+                break
+            if nextNode.val != val:
+                currNode = nextNode
+            else:
+                currNode.next = nextNode.next
+        
+        return head

@@ -1,0 +1,76 @@
+Description:
+
+Suppose a sorted array is rotated at some pivot unknown to you beforehand.
+
+(i.e., 0 1 2 4 5 6 7 might become 4 5 6 7 0 1 2).
+
+You are given a target value to search. If found in the array return its index, otherwise return -1.
+
+You may assume no duplicate exists in the array.
+
+===================================================
+Thoughts:
+
+1. Construct the view of "logical index", "physical index" and "offset".
+
+2. Dealing with loop conditions: startIdx < endIdx? startIdx < endIdx - 1?
+
+    A. Normally, it would be startIdx < endIdx, cuz those two indices should meet. The senerio is:
+    
+        int startIdx = 0, endIdx = n - 1, midIdx;
+        while (startIdx < endIdx) {
+            midIdx = (startIdx + endIdx) / 2;
+            if (array[midIdx] == target) {
+                return midIdx;
+            } else if (array[midIdx] < target) {
+                startIdx = midIdx + 1;
+            } else {
+                endIdx = midIdx - 1;
+            }
+        }
+        
+        Since the new search range never contains the checked middle value, it is guarenteed to become smaller, and eventually two indices will meet.
+        
+    B. Sometimes, indices may not meet. (Cannot illustrate an example for now).
+
+=============================================================
+Code (binary search, C):
+---------------------------------------------
+int search(int A[], int n, int target) {
+    int offset;
+    if (A[0] < A[n-1]) {
+        offset = 0;
+    } else {
+        int start = 0, end = n-1, mid;
+        while (start < end) {
+            mid = (start + end) / 2;
+            if (A[mid] > A[mid+1]) {
+                offset = mid+1;
+                break;
+            } else if (A[mid] < A[0]) {
+                end = mid;
+            } else {
+                start = mid+1;
+            }
+        }
+    }
+    
+    // does the binary search again with new indices.
+    int logicalStart = 0, logicalEnd = n-1, logicalMid, realMid;
+    while (logicalStart < logicalEnd) {
+        logicalMid = (logicalStart + logicalEnd) / 2;
+        realMid = (logicalMid + offset) % n;
+        if (A[realMid] == target) {
+            return realMid;
+        } else if (A[realMid] < target) {
+            logicalStart = logicalMid + 1;
+        } else {
+            logicalEnd = logicalMid - 1;
+        }
+    }
+    if (A[(logicalStart + offset) % n] == target) {
+        return (logicalStart + offset) % n;
+    } else {
+        return -1;
+    }
+}

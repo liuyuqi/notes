@@ -1,0 +1,57 @@
+Description:
+
+Given a m x n grid filled with non-negative numbers, find a path from top left to bottom right which minimizes the sum of all numbers along its path.
+
+Note: You can only move either down or right at any point in time.
+
+=================================================
+Thoughts:
+
+1. Passing array as double pointer in C: an array cannot be directly handled by a double pointer. It has to be converted to an array of pointers (which points to an array).
+
+2. Implemented in an iterative DP way.
+
+3. Need to distinguish "zero value" from "out of bound situation"! Define outofbound to be -1 can handle it well.
+
+=============================================
+Code (C, iterative DP):
+-----------------------------------
+int myMin(int value1, int value2) {
+    if (value1 == -1 && value2 == -1)
+        return 0;
+    if (value1 == -1)
+        return value2;
+    if (value2 == -1)
+        return value1;
+    return (value1 > value2) ? value2 : value1;
+}
+
+int getValueFrom(int **records, int row, int col, int nRows, int nCols) {
+    if (row < 0 || row >= nRows || col < 0 || col >= nCols) {
+        return -1;
+    } else {
+        return records[row][col];
+    }
+}
+
+int minPathSum(int **grid, int nRows, int nCols) {
+    
+    int **records = (int**)malloc(nRows*sizeof(int*));
+    int row, col, leftValue, upperValue;
+    
+    for (row = 0; row < nRows; row++) {
+        records[row] = (int*)malloc(nCols*sizeof(int));
+        for (col = 0; col < nCols; col++) {
+            records[row][col] = grid[row][col];
+        }
+    }
+    
+    for (row = 0; row < nRows; row++) {
+        for (col = 0; col < nCols; col++) {
+            leftValue = getValueFrom(records, row, col-1, nRows, nCols);
+            upperValue = getValueFrom(records, row-1, col, nRows, nCols);
+            records[row][col] += myMin(leftValue, upperValue);
+        }
+    }
+    return records[nRows-1][nCols-1];
+}

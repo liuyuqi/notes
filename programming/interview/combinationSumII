@@ -1,0 +1,59 @@
+Description:
+
+Given a collection of candidate numbers (C) and a target number (T), find all unique combinations in C where the candidate numbers sums to T.
+
+Each number in C may only be used once in the combination.
+
+Note:
+All numbers (including target) will be positive integers.
+Elements in a combination (a1, a2, … , ak) must be in non-descending order. (ie, a1 ≤ a2 ≤ … ≤ ak).
+The solution set must not contain duplicate combinations.
+For example, given candidate set 10,1,2,7,6,1,5 and target 8, 
+A solution set is: 
+[1, 7] 
+[1, 2, 5] 
+[2, 6] 
+[1, 1, 6] 
+
+==========================================
+Thoughts:
+
+Can still use recursion. However, need to notice when to skip the same values in the candidates and when is it still possible to use the same value that just have already been used.
+
+
+===========================================
+Code (Python, recursion):
+-----------------------------------
+
+class Solution:
+    # @param candidates, a list of integers
+    # @param target, integer
+    # @return a list of lists of integers
+    def combinationSum2(self, candidates, target):
+        results = [] # results is a list of lists of integers.
+        partResult = [] # partResult is a list of integers
+        candidates.sort()
+        self.combSumRecursive(partResult, 0, 0, candidates, target, results)
+        return results
+    
+    def combSumRecursive(self, partResult, startIdx, currentSum, candidates, target, results):
+        if currentSum == target:
+            results.append(partResult)
+            return
+        if startIdx >= len(candidates):
+            return
+        
+        if currentSum + candidates[startIdx] <= target:
+            newPartResult = partResult[:]
+            newPartResult.append(candidates[startIdx])
+            self.combSumRecursive(newPartResult, startIdx+1, currentSum+candidates[startIdx], candidates, target, results)
+        
+        nextIdx = self.getNextIdxWithDifferentValue(startIdx, candidates)
+        self.combSumRecursive(partResult, nextIdx, currentSum, candidates, target, results)
+     
+        
+    def getNextIdxWithDifferentValue(self, currIdx, candidates):
+        for idx in range(currIdx, len(candidates)):
+            if candidates[idx] != candidates[currIdx]:
+                return idx
+        return len(candidates)

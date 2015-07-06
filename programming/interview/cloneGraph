@@ -1,0 +1,88 @@
+Description:
+
+ Clone an undirected graph. Each node in the graph contains a label and a list of its neighbors.
+
+OJ's undirected graph serialization:
+
+Nodes are labeled uniquely.
+We use # as a separator for each node, and , as a separator for node label and each neighbor of the node.
+
+As an example, consider the serialized graph {0,1,2#1,2#2,2}.
+
+The graph has a total of three nodes, and therefore contains three parts as separated by #.
+
+    First node is labeled as 0. Connect node 0 to both nodes 1 and 2.
+    Second node is labeled as 1. Connect node 1 to node 2.
+    Third node is labeled as 2. Connect node 2 to node 2 (itself), thus forming a self-cycle.
+
+Visually, the graph looks like the following:
+
+       1
+      / \
+     /   \
+    0 --- 2
+         / \
+         \_/
+
+==================================================================
+Thoughts:
+
+Do it in a iterative way to avoid using too much memory.
+
+Maintain a dictionary, acted as "visited node".
+
+Maintain a todoList, acted as controller of iteration.
+
+Creation of new nodes can be separated from linking with other nodes. The delay of such task can be implemented by todoList (since nodes stored in todoList are nodes in the original tree, we can preserve the linking information needed for future linking of new nodes). Finding created new nodes can be done by searching in the dictionary.
+
+Graph representation in leetcode is so fucked up that edge information is stored only once in the adjacent list, making the whole graph can be found only by starting the traversal from only one node. FUCKED UP!!!
+
+==================================================================
+Code (iteration, BFS, Python):
+---------------------------------------
+# Definition for a undirected graph node
+# class UndirectedGraphNode:
+#     def __init__(self, x):
+#         self.label = x
+#         self.neighbors = []
+
+class Solution:
+    # @param node, a undirected graph node
+    # @return a undirected graph node
+    def cloneGraph(self, node):
+        if node == None:
+            return None
+        
+        # nodeDict: a dictionary of newly created nodes.
+        # format: key-label, value-newNode.
+        nodeDict = {} 
+        
+        # todoList: a list containing all unfinished old nodes (created a copy but not yet finished linking)
+        # format: key-oldNode.
+        todoList = [] 
+        
+        origNode = node
+        newNode = UndirectedGraphNode(origNode.label)
+        nodeToReturn = newNode
+        nodeDict[newNode.label] = newNode
+        todoList.append(origNode)
+        
+        while len(todoList) > 0:
+            
+            origNode = todoList.pop(0)
+            newNode = nodeDict[origNode.label]
+            
+            for oldNeighbor in origNode.neighbors:
+                label = oldNeighbor.label
+                
+                if nodeDict.has_key(label): # neighbor already created
+                    newNode.neighbors.append(nodeDict[label])
+                    
+                else: # neighbor not created, create and add to dict.
+                    newNeighbor = UndirectedGraphNode(label)
+                    todoList.append(oldNeighbor)
+                    nodeDict[label] = newNeighbor
+                    newNode.neighbors.append(newNeighbor)
+                    
+        return nodeToReturn
+                    

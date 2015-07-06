@@ -1,0 +1,65 @@
+Description:
+
+Given a sorted array of integers, find the starting and ending position of a given target value.
+
+Your algorithm's runtime complexity must be in the order of O(log n).
+
+If the target is not found in the array, return [-1, -1].
+
+For example,
+Given [5, 7, 7, 8, 8, 10] and target value 8,
+return [3, 4].
+
+==================================================
+Thoughts:
+
+First use binary search to find a relatively accurate spot.
+Then consider more cases...
+Really mind the indices.....
+
+==================================================
+Code (C++, binary search):
+---------------------------------------
+class Solution {
+public:
+    vector<int> searchRange(int A[], int n, int target) {
+        int startIdx = 0, endIdx = n-1, currIdx = (n-1)/2, finalIdx = -1;
+        vector<int> result;
+        result.push_back(-1);
+        result.push_back(-1);
+        while (endIdx - startIdx > 1) {
+            if (A[currIdx] == target) {
+                finalIdx = currIdx;
+                break;
+            } else if (A[currIdx] > target) {
+                endIdx = currIdx;
+                currIdx = (startIdx + endIdx) / 2;
+            } else {
+                startIdx = currIdx;
+                currIdx = (startIdx + endIdx) / 2;
+            }
+        }
+        
+        if (finalIdx == -1) {
+            if (A[startIdx] != target && A[endIdx] != target) {
+                return result;
+            }
+            finalIdx = (A[startIdx] == target) ? startIdx : endIdx;
+        }
+        
+        for (currIdx = finalIdx; currIdx >= 0; currIdx--) {
+            if (A[currIdx] != target) {
+                break;
+            }
+        }
+        result[0] = currIdx+1;
+        for (currIdx = finalIdx; currIdx < n; currIdx++) {
+            if (A[currIdx] != target) {
+                break;
+            }
+        }
+        result[1] = currIdx-1;
+        
+        return result;
+    }
+};

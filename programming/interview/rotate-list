@@ -1,0 +1,65 @@
+Thoughts:
+
+1. Has several ways to deal with it: 
+    a. simulating the counting process (not recommended), this can be not universal;
+    b. Iteratively running down the list (my method), can be written in a universal function, clear;
+    c. two pointers (also okay).
+
+2. Handling corner cases: len == 0, len == 1, k % len == 0: return head;
+
+
+
+=====================================
+Description:
+-------------------------
+Given a list, rotate the list to the right by k places, where k is non-negative.
+
+For example:
+Given 1->2->3->4->5->NULL and k = 2,
+return 4->5->1->2->3->NULL.
+
+=====================================
+Code:
+-------------------------
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode *rotateRight(ListNode *head, int k) {
+        if (head == NULL || head->next == NULL)
+            return head;
+            
+        ListNode *newHead = NULL, *newTail = NULL, *oldTail = NULL, *curr = head;
+        int len = 0, i;
+        while (curr != NULL) {
+            curr = curr -> next;
+            len++;
+        }
+        
+        k = k % len;
+        if (k == 0)
+            return head;
+            
+        curr = head;
+        for (i = 1; i <= len; i++) {
+            if (i + k == len)
+                newTail = curr;
+            if (i == len) 
+                oldTail = curr;
+            if (i + k == len + 1)
+                newHead = curr;
+            
+            curr = curr->next;
+        }
+        
+        newTail->next = NULL;
+        oldTail->next = head;
+        return newHead;
+    }
+};

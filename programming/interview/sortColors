@@ -1,0 +1,36 @@
+Description:
+
+Given an array with n objects colored red, white or blue, sort them so that objects of the same color are adjacent, with the colors in the order red, white and blue.
+
+Here, we will use the integers 0, 1, and 2 to represent the color red, white, and blue respectively.
+
+Note:
+You are not suppose to use the library's sort function for this problem.
+
+=====================================================
+Thoughts:
+
+Since there is requirements that try to do that in place, it's better not to use the bucket sort algorithm. Instead, should consider switching elements.
+
+Notice that the idx increments in the first branch, but not in the second branch. This is because the iteration in the algorithm starts from the beginning, and that the "sorted" part of the array is guarenteed to be less than 2 (think about the invariant theory in algorithm analysis, the sorted part is invariant, and in this problem, there are two sorted parts. The iterator starts from left sorted part and is always adjacent to the left sorted part, therefore idx+=1 happens in the first branch).
+
+=====================================================
+Code (Iterative sorting, Python, O(n)):
+-----------------------------------------
+class Solution:
+    # @param A a list of integers
+    # @return nothing, sort in place
+    def sortColors(self, A):
+        i = 0
+        j = len(A)-1
+        idx = 0
+        while idx <= j:
+            if A[idx] == 0:
+                (A[i], A[idx]) = (A[idx], A[i])
+                i += 1
+                idx += 1
+            elif A[idx] == 2:
+                (A[j], A[idx]) = (A[idx], A[j])
+                j -= 1
+            else:
+                idx += 1 

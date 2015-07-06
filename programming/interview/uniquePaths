@@ -1,0 +1,35 @@
+Thoughts:
+
+This can be done as a combination of recursive functions and dynamic programming. With recursive functions controlling the flow of program, while dynamic programming saving the amount of search work needs to be done.
+
+==========================================
+Code (Java)
+--------------------------------
+public class Solution {
+    public int uniquePaths(int m, int n) {
+        int[][] records = new int[m][n];
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                records[i][j] = 0;
+            }
+        }
+        records[m-1][n-1] = 1;
+        
+        return getNumOfUniquePaths(records, 0, 0, m, n);
+    }
+    
+    public static int getNumOfUniquePaths(
+        int[][] records, int i, int j, int m, int n) {
+        if (i >= m || j >= n)
+            return 0;
+            
+        if (records[i][j] != 0)
+            return records[i][j]; //Just use the result and avoid further searches.
+            
+        int totalNum = getNumOfUniquePaths(records, i+1, j, m, n) +
+                    getNumOfUniquePaths(records, i, j+1, m, n);
+        records[i][j] = totalNum; //Just assign relevant fields in the array to save further search time.
+        
+        return totalNum;
+    }
+}

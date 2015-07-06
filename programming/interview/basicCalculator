@@ -1,0 +1,70 @@
+Problem Description:
+
+Implement a basic calculator to evaluate a simple expression string.
+
+The expression string may contain open ( and closing parentheses ), the plus + or minus sign -, non-negative integers and empty spaces .
+
+You may assume that the given expression is always valid.
+
+Some examples:
+
+"1 + 1" = 2
+" 2-1 + 2 " = 3
+"(1+(4+5+2)-3)+(6+8)" = 23
+
+Note: Do not use the eval built-in library function. 
+
+=========================================================
+Thoughts:
+
+Since this is simple plus-and-minus calculation (no multiplication and division), we don't need to create new classes (wasting memory). Just do the calculation in place, recording the sign history when parenthesis is met.
+
+Also, should not try evaluating the recursive parenthesis inside-out or outside-inwards, since it may make the algorithm O(n^2). Just do it in place with a stack recording the sign history.
+
+=========================================================
+Code (Python, iteration, 1 pass):
+------------------------------------------
+class Solution:
+    # @param {string} s
+    # @return {integer}
+    def calculate(self, s):
+        
+        st = collections.deque() # top of deque is current sign.
+        st.appendleft(1) # top of stack is +1.
+        strlen = len(s)
+        idx = 0
+        result = 0
+        sign = 1
+        
+        while idx < strlen:
+            if s[idx] == ' ':
+                idx += 1
+                continue
+            elif s[idx].isdigit():
+                (num, endIdx) = self.getInt(s, idx, strlen)
+                result += sign * num
+                idx = endIdx + 1
+            elif s[idx] == '+':
+                sign = st[0]
+                idx += 1
+            elif s[idx] == '-':
+                sign = -st[0]
+                idx += 1
+            elif s[idx] == '(':
+                st.appendleft(sign)
+                idx += 1
+            elif s[idx] == ')':
+                sign = st.popleft()
+                idx += 1
+        
+        return result
+        
+    # return a tuple (num, endIdx).        
+    def getInt(self, s, startIdx, strlen):
+        result = 0
+        idx = startIdx
+        while idx < strlen and s[idx].isdigit():
+            result = result * 10 + int(s[idx])
+            idx += 1
+        return (result, idx-1)
+        

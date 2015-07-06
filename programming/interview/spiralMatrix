@@ -1,0 +1,114 @@
+Description:
+
+Given a matrix of m x n elements (m rows, n columns), return all elements of the matrix in spiral order.
+
+For example,
+Given the following matrix:
+
+[
+ [ 1, 2, 3 ],
+ [ 4, 5, 6 ],
+ [ 7, 8, 9 ]
+]
+
+You should return [1,2,3,6,9,8,7,4,5]. 
+
+=================================================================
+Thoughts:
+
+My initial thought is always: writing a getNextPosition function to get the indices of the next position to read the next number, then read. Very easy, great readability, but need a lot of function call and/or maintaining a whole new matrix in the memory to keep track of the position. Instead I tried to describe the position-moving all in a single function in an iterative manner (simulation).
+
+For a matrix in the description, I should group the movements like this:
+1,2,3;
+6,9;
+8,7;
+4;
+5;
+
+And should not be like this:
+1,2;
+3,6;
+9,8;
+7,4;
+5;
+(because there's no way to do this).
+
+Lots and lots of corner cases!!!
+
+============================================================
+Code (iteration, Python):
+-----------------------------------------
+class Solution:
+    # @param {integer[][]} matrix
+    # @return {integer[]}
+    def spiralOrder(self, matrix):
+        numRows = len(matrix)
+        if numRows == 0:
+            return []
+        numCols = len(matrix[0])
+        if numCols == 0:
+            return []
+            
+        result = []
+        roundCnt = 0
+        numbersDone = 0
+        row = 0
+        col = 0
+            
+        while True:
+            # output row, left -> right
+            result.extend(self.getRowElements(matrix, row, col, numCols-roundCnt-1))
+            numbersDone += numCols - roundCnt - col
+            col = numCols - roundCnt - 1
+            row += 1
+            if numbersDone == numRows * numCols:
+                break
+            # turn down, up -> down
+            result.extend(self.getColElements(matrix, col, row, numRows-roundCnt-1))
+            numbersDone += numRows - roundCnt - row
+            row = numRows - roundCnt - 1
+            col -= 1
+            if numbersDone == numRows * numCols:
+                break
+            # turn left, right -> left
+            result.extend(self.getRowElements(matrix, row, col, roundCnt))
+            numbersDone += col - roundCnt + 1
+            col = roundCnt
+            row -= 1
+            if numbersDone == numRows * numCols:
+                break
+            # turn up, down -> up
+            result.extend(self.getColElements(matrix, col, row, roundCnt+1))
+            numbersDone += row - roundCnt
+            row = roundCnt+1
+            col += 1
+            if numbersDone == numRows * numCols:
+                break
+            # increment roundCnt
+            roundCnt += 1
+        return result
+    
+    # note that colStart and colEnd are both inclusive indices.
+    # return a list of elements
+    def getRowElements(self, matrix, row, colStart, colEnd):
+        if colStart <= colEnd:
+            return matrix[row][colStart:colEnd+1]
+        else:
+            result = matrix[row][colEnd:colStart+1]
+            result.reverse()
+            return result
+            
+    # note that rowStart and rowEnd are both inclusive indices.
+    # return a list of elements
+    def getColElements(self, matrix, col, rowStart, rowEnd):
+        result = []
+        if rowStart <= rowEnd:
+            for row in range(rowStart, rowEnd+1):
+                result.append(matrix[row][col])
+        else:
+            for row in range(rowEnd, rowStart+1):
+                result.append(matrix[row][col])
+            result.reverse()
+        return result
+            
+

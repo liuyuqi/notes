@@ -1,0 +1,144 @@
+Description:
+
+There are a total of n courses you have to take, labeled from 0 to n - 1.
+
+Some courses may have prerequisites, for example to take course 0 you have to first take course 1, which is expressed as a pair: [0,1]
+
+Given the total number of courses and a list of prerequisite pairs, is it possible for you to finish all courses?
+
+For example:
+
+2, [[1,0]]
+
+There are a total of 2 courses to take. To take course 1 you should have finished course 0. So it is possible.
+
+2, [[1,0],[0,1]]
+
+There are a total of 2 courses to take. To take course 1 you should have finished course 0, and to take course 0 you should also have finished course 1. So it is impossible.
+
+Note:
+The input prerequisites is a graph represented by a list of edges, not adjacency matrices. Read more about how a graph is represented. 
+
+=======================================================================
+Thoughts:
+
+1. Use iteration: whether adjacent matrix or list iteration... Bad readability.
+
+2. Use recursion + DP. Can be made in OOP to increase readablity.
+
+=======================================================================
+Code 1 (Iteration, Python):
+------------------------------------------------
+import collections
+class Solution:
+    # @param {integer} numCourses
+    # @param {integer[][]} prerequisites
+    # @return {boolean}
+    def canFinish(self, numCourses, prerequisites):
+        prereqDict = {}
+        edgeQueue = collections.deque([])
+        edgeQueueTmp = collections.deque([])
+        edgeSet = set([]) # This works synchronically with edgeQueue.
+        coursesTakenSet = set([])
+        
+        for pre in prerequisites:
+            if prereqDict.has_key(pre[0]) == False:
+                # initialize a new dictionary record.
+                prereqDict[pre[0]] = set([])
+            prereqDict[pre[0]].add(pre[1])
+        
+        # Adding all the to-resolve dependencies in the queue.
+        for courseID in range(numCourses):
+            # if the course doesn't have dependency, take them.
+            if prereqDict.has_key(courseID) == False:
+                coursesTakenSet.add(courseID)
+                continue
+            # add all the dependency edges in the queue.
+            prereqsList = prereqDict[courseID]
+            for prereqID in prereqsList:
+                if (courseID, prereqID) not in edgeSet:
+                    edgeQueue.append((courseID, prereqID))
+                    edgeSet.add((courseID, prereqID))
+        
+        # Resolving the dependencies by iterating the queue.
+        eliminated = True # set to true if some edges are eliminated in the loop.
+        while eliminated == True:
+            if len(edgeSet) == 0:
+                return True
+            eliminated = False
+            for prereqPair in edgeQueue:
+                courseID = prereqPair[0]
+                prereqID = prereqPair[1]
+                if prereqID not in coursesTakenSet:
+                    edgeQueueTmp.append(prereqPair)
+                else:
+                    edgeSet.discard(prereqPair)
+                    prereqDict[courseID].discard(prereqID)
+                    eliminated = True
+                    if len(prereqDict[courseID]) == 0:
+                        coursesTakenSet.add(courseID)
+                        
+            edgeQueue = edgeQueueTmp
+            edgeQueueTmp = collections.deque([])
+        return False
+            
+======================================================================================
+Code 2 (Recursion + DP, Python):
+------------------------------------------------------------------
+import collections
+class Solution:
+    # @param {integer} numCourses
+    # @param {integer[][]} prerequisites
+    # @return {boolean}
+    def canFinish(self, numCourses, prerequisites):
+        
+        courseList = collections.deque([])
+        
+        # init and append all the course instances. O(n)
+        for courseID in range(numCourses):
+            courseList.append(Course(courseID))
+        
+        # adding prereqs to all courses. O(n)
+        for preq in prerequisites:
+            courseID = preq[0]
+            prereqID = preq[1]
+            courseList[courseID].addPrerequisite(courseList[prereqID])
+        
+        # checking cycles for every course. The most tricky part. O(n)
+        for course in courseList:
+            if course.hasCycle() == True:
+                return False
+                
+        return True
+        
+        
+class Course:
+    
+    # Notice: no class variables should be created! Otherwise will inherit!!!!! DANGER!!!
+    
+    def __init__(self, courseID):
+        self.courseID = courseID
+        self.prereqSet = set([]) # a set containing all prereq course instances.
+        self.takenBool = False
+        self.cycleBool = False  # true if cycle is decected here.
+    
+    def addPrerequisite(self, prereqInstance):
+        self.prereqSet.add(prereqInstance)
+    
+    def hasCycle(self):
+        if self.takenBool == True:
+            return False
+        if self.cycleBool == True:
+            return True
+        
+        self.cycleBool = True # set this to True, and if recursion reaches the same object, it's definitely a cycle.
+        
+        for prereqInst in self.prereqSet:
+            if prereqInst.hasCycle() == True:
+                return True  # Cannot take prerequisite, hense cannot take this course either.
+                
+        # Now we can safely take this course.
+        self.takenBool = True
+        self.cycleBool = False
+        return False
+

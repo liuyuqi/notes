@@ -1,0 +1,61 @@
+Thoughts:
+
+Never miss the statement: tail = newNode;   !!!!!!!
+
+The use of do...while...
+
+===========================
+Descriptions:
+-------------------
+You are given two linked lists representing two non-negative numbers. The digits are stored in reverse order and each of their nodes contain a single digit. Add the two numbers and return it as a linked list.
+
+Input: (2 -> 4 -> 3) + (5 -> 6 -> 4)
+Output: 7 -> 0 -> 8
+
+===========================
+Code:
+-------------------
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) {
+ *         val = x;
+ *         next = null;
+ *     }
+ * }
+ */
+public class Solution {
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        ListNode curr1 = l1, curr2 = l2, head = null, tail = null, newNode = null;
+        int sum = 0, carry = 0;
+        do {
+            sum = 0;
+            if (curr1 != null)
+                sum += curr1.val;
+            if (curr2 != null)
+                sum += curr2.val;
+            sum = sum + carry;
+            carry = 0;
+            if (sum >= 10) {
+                carry = (sum - sum%10) / 10;
+                sum = sum % 10;
+            }
+            
+            newNode = new ListNode(sum);
+            if (head == null) {
+                tail = head = newNode;
+            } else {
+                tail.next = newNode;
+                tail = newNode;
+            }
+            
+            if (curr1 != null)
+                curr1 = curr1.next;
+            if (curr2 != null)
+                curr2 = curr2.next;
+        } while (curr1 != null || curr2 != null || carry != 0);
+        return head;
+    }
+}

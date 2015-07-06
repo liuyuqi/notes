@@ -1,0 +1,49 @@
+Thoughts:
+
+Recursive function design is the most basic, intuitive way. However, it can take too much time to call functions recursively.
+
+DP is better to reduce running time.
+DP: needs an array to record the chain of adjacent words. Saves the time to traverse again and again.
+
+=====================================
+Code (recursive, Java):
+--------------------------------
+
+public class Solution {
+    public boolean wordBreak(String s, Set<String> dict) {
+        if (s.length() == 0)
+            return true;
+        for (int end = 1; end <= s.length(); end++) {
+            if (dict.contains(s.substring(0, end))) {
+                if (wordBreak(s.substring(end, s.length()), dict) == true)
+                    return true;
+            }
+        }
+        return false; // Cannot find a word from the beginning of a string to the end of it.
+    }
+}
+
+======================================
+Code (DP, Java):
+--------------------------------
+public class Solution {
+    public boolean wordBreak(String s, Set<String> dict) {
+        if (s.length() == 0)
+            return true;
+        
+        boolean[] records = new boolean[s.length()+1];
+        records[s.length()] = true;
+        for (int i = 0; i < records.length - 1; i++)
+            records[i] = false;
+            
+        for (int start = s.length()-1; start >= 0; start--) {
+            for (int end = start+1; end <= s.length(); end++) {
+                if (dict.contains(s.substring(start, end)) && records[end] == true) {
+                    records[start] = true;
+                }
+            }
+        }
+        
+        return records[0];
+    }
+}

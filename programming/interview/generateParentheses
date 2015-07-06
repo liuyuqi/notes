@@ -1,0 +1,40 @@
+Description:
+
+Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
+
+For example, given n = 3, a solution set is:
+
+"((()))", "(()())", "(())()", "()(())", "()()()"
+
+========================================
+Thought:
+
+just recursion...
+
+========================================
+Code (Python, recursion):
+-------------------------------
+class Solution:
+    # @param an integer
+    # @return a list of string
+    def generateParenthesis(self, n):
+        solutionSet = []
+        partSolution = ""
+        self.generateRecursion(0, 0, n, partSolution, solutionSet)
+        return solutionSet
+    
+    def generateRecursion(self, leftCnt, rightCnt, n, partSolution, solutionSet):
+        if leftCnt == rightCnt and leftCnt == n:
+            solutionSet.append(partSolution)
+            return
+        if leftCnt == rightCnt:
+            newPartSolution = partSolution + '('
+            self.generateRecursion(leftCnt+1, rightCnt, n, newPartSolution, solutionSet)
+        elif leftCnt == n:
+            newPartSolution = partSolution + ')'
+            self.generateRecursion(leftCnt, rightCnt+1, n, newPartSolution, solutionSet)
+        else:
+            newPartSolution = partSolution + '('
+            self.generateRecursion(leftCnt+1, rightCnt, n, newPartSolution, solutionSet)
+            newPartSolution = partSolution + ')'
+            self.generateRecursion(leftCnt, rightCnt+1, n, newPartSolution, solutionSet)

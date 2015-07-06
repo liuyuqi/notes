@@ -1,0 +1,133 @@
+Description: 
+
+Given a singly linked list L: L0→L1→…→Ln-1→Ln,
+reorder it to: L0→Ln→L1→Ln-1→L2→Ln-2→…
+
+You must do this in-place without altering the nodes' values.
+
+For example,
+Given {1,2,3,4}, reorder it to {1,4,2,3}.
+
+========================================================
+Thoughts:
+
+1. First cut the list in half. Then reverse the second half. Finally insert all the nodes by list, with one element in each list at a time.
+
+2. Serious bug: TLE. This is actually not TLE, it's infinite loop. Take this for example:
+           head->1->2->3->NULL.
+           
+           The resulting list will be
+           head->1->2->3->3->3->3.....
+           
+   Buggy code:
+   
+   void insert_in_new_order (struct ListNode *firstHead, struct ListNode *secondHead) {
+        struct ListNode *tail = NULL;
+        while (firstHead != NULL && secondHead != NULL) {
+            if (tail == NULL) {
+                tail = firstHead;
+            } else {
+                tail->next = firstHead;
+                tail = tail->next;
+            }
+            tail->next = secondHead;
+            tail = tail->next;
+            firstHead = firstHead->next;
+            secondHead = secondHead->next;
+        }
+        if (firstHead != NULL) {
+            tail->next = firstHead;
+        }
+    }
+        
+    After the first loop, firstHead will point to 3 instead of 2, and secondHead will point to NULL.
+    Then the loop exits, leaving to tail->next = firstHead, and 3 pointed to 3 itself...
+
+============================================
+Code (C, pointer operations):
+-----------------------------------
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     struct ListNode *next;
+ * };
+ */
+int get_length_of_list (struct ListNode *head) {
+    int len = 0;
+    while (head != NULL) {
+        head = head->next;
+        len++;
+    }
+    return len;
+}
+ 
+int get_second_half_head_index (int len) {
+    if (len % 2 == 0)
+        return (len/2);
+    else return (len/2 + 1);
+}
+
+struct ListNode *get_first_half_tail (struct ListNode *head, int lenOfFirstHalf) {
+    struct ListNode *curr = head;
+    while (lenOfFirstHalf > 1) {
+        curr = curr->next;
+        lenOfFirstHalf--;
+    }
+    return curr;
+}
+
+struct ListNode *reverse_list(struct ListNode *secondHalfHead) {
+    if (secondHalfHead == NULL || secondHalfHead->next == NULL) {
+        return secondHalfHead;
+    }
+    
+    struct ListNode *newHead = NULL, *p1 = secondHalfHead, *p2 = p1->next, *nextNode = p2;
+    p1->next = NULL;
+    do {
+        nextNode = nextNode->next;
+        p2->next = p1;
+        newHead = p2;
+        p1 = p2;
+        p2 = nextNode;
+    } while (nextNode != NULL);
+    
+    return newHead;
+}
+
+void insert_in_new_order (struct ListNode *firstHead, struct ListNode *secondHead) {
+    struct ListNode *tail = NULL, *firstListNext = NULL, *secondListNext = NULL;
+    while (firstHead != NULL && secondHead != NULL) {
+        firstListNext = firstHead->next;
+        secondListNext = secondHead->next;
+        if (tail == NULL) {
+            tail = firstHead;
+        } else {
+            tail->next = firstHead;
+            tail = tail->next;
+        }
+        tail->next = secondHead;
+        tail = tail->next;
+        firstHead = firstListNext;
+        secondHead = secondListNext;
+    }
+    if (firstHead != NULL) {
+        tail->next = firstHead;
+    }
+}
+
+void reorderList(struct ListNode *head) {
+    if (head == NULL || head->next == NULL || head->next->next == NULL)
+        return;
+        
+    struct ListNode *firstHalfHead = head, *firstHalfTail = NULL, *secondHalfHead = NULL, *curr = NULL;
+    int len = get_length_of_list(head), secondHalfHeadIndex = 0;
+    
+    secondHalfHeadIndex = get_second_half_head_index(len);
+    firstHalfTail = get_first_half_tail(head, secondHalfHeadIndex);
+    secondHalfHead = firstHalfTail->next;
+    firstHalfTail->next = NULL;
+    secondHalfHead = reverse_list(secondHalfHead);
+    
+    insert_in_new_order (firstHalfHead, secondHalfHead);
+}

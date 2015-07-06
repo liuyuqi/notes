@@ -1,0 +1,31 @@
+Thoughts:
+
+Notice the definition of n and height... it takes 2 steps to reach the top, meaning that stairs are from 0 to 2...
+
+======================================
+Codes:
+-----------------------------------
+public class Solution {
+    public int climbStairs(int n) {
+        int[] records = new int[n+1];
+        for (int i = 1; i <= n; i++) {
+            records[i] = 0;
+        }
+        records[n] = 1;
+        
+        return getNumOfWays(records, 0, n);
+    }
+    
+    public static int getNumOfWays(int[] records, int floor, int height) {
+        if (floor > height)
+            return 0;
+        
+        if (records[floor] != 0)
+            return records[floor];
+        
+        int options = getNumOfWays(records, floor+1, height) +
+                        getNumOfWays(records, floor+2, height);
+        records[floor] = options;
+        return options;
+    }
+}

@@ -1,0 +1,85 @@
+Problem description:
+
+ Given a 2D binary matrix filled with 0's and 1's, find the largest square containing all 1's and return its area.
+
+For example, given the following matrix:
+
+1 0 1 0 0
+1 0 1 1 1
+1 1 1 1 1
+1 0 0 1 0
+
+Return 4. 
+
+==============================================================
+Thoughts:
+
+One character of a square is that it has all '1's from one diagonal to the other. Therefore, we could record the maximum dimension of squares from one point to its up and left directions, like this (in the example given):
+
+1 0 1 0 0
+1 0 1 1 1
+1 1 1 2 2
+1 0 0 1 0
+
+Therefore, we can adopt the DP way, iterating the whole array once. Within every iteration, we only need to scan all the upper points and all the left points, and if they are all 1, add 1 to the diagonal value.
+
+However, this is the simple case. More complicated case can be: the shape can be different. Take this array:
+
+1 1 1 0
+1 1 1 0
+0 1 1 1
+1 1 1 1
+
+At some time, the DP array can be:
+
+1 1 1 0
+1 2 2 0
+0 1 ?
+
+What is the value of the question mark? If the leftmost one was 1 instead of 0, then the question mark must be 3 by our algorithm. However, since we have the 0, it's not a square of dimension 3. At this time, we should check whether there is a square at a smaller dimension, rather than assigning the question mark '1'. We should always get the largest dimension possible at this time.
+
+===============================================================
+Code (Iterative DP, Python):
+--------------------------------------------
+class Solution:
+    # @param {character[][]} matrix
+    # @return {integer}
+    def maximalSquare(self, matrix):
+        numRows = len(matrix)
+        if numRows == 0:
+            return 0
+        numCols = len(matrix[0])
+        records = [[0 for j in range(numCols)] for i in range(numRows)]
+        maxRecord = 0
+        
+        for row in range(numRows):
+            for col in range(numCols):
+                records[row][col] = int(matrix[row][col])
+                if row > 0 and col > 0:
+                    dimension = records[row-1][col-1]
+                    while dimension > 0:
+                        if self.isSquare(matrix, records, row, col, dimension) == True:
+                            records[row][col] += dimension
+                            break
+                        else:
+                            dimension -= 1
+                if records[row][col] > maxRecord:
+                    maxRecord = records[row][col]
+        
+        return maxRecord*maxRecord
+    
+    # returns a bool.
+    def isSquare(self, matrix, records, rowConst, colConst, dimension):
+        if matrix[rowConst][colConst] == '0':
+            return False
+        prevDimension = int(records[rowConst-1][colConst-1])
+        if prevDimension == 0:
+            return False
+        
+        for row in range(rowConst-dimension, rowConst):
+            if matrix[row][colConst] == '0':
+                return False
+        for col in range(colConst-dimension, colConst):
+            if matrix[rowConst][col] == '0':
+                return False
+        return True

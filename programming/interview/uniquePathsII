@@ -1,0 +1,79 @@
+Thoughts:
+
+1. recursion + DP does save time than pure recursion (exponential minus), but not as much as pure DP (linear).
+
+2. Linear time DP can be implemented like this:
+    Since the spread of paths are in one direction (only down or right), we could implement that in two embedded loops.
+
+=================================
+Code (Java, recursion+DP)
+----------------------------
+public class Solution {
+    public int uniquePathsWithObstacles(int[][] obstacleGrid) {
+        int lenRow = obstacleGrid.length;
+        int lenCol = obstacleGrid[0].length;
+        int[][] records = new int[lenRow][lenCol];
+        for (int i = 0; i < lenRow; i++) {
+            for (int j = 0; j < lenCol; j++) {
+                records[i][j] = 0;
+            }
+        }
+        records[lenRow-1][lenCol-1] = 1;
+        
+        return getNumOfUniquePaths(obstacleGrid, records, 0, 0, lenRow, lenCol);
+    }
+    
+    public static int getNumOfUniquePaths(
+        int[][] grid, int[][] records, int i, int j, int lenRow, int lenCol) {
+        // Recursive function
+        if (i >= lenRow || j >= lenCol || grid[i][j] == 1)
+            return 0;
+        if (records[i][j] != 0)
+            return records[i][j];
+        
+        int numOfPathsRight = getNumOfUniquePaths(grid, records, i, j+1, lenRow, lenCol);
+        int numOfPathsBottom = getNumOfUniquePaths(grid, records, i+1, j, lenRow, lenCol);
+        
+        records[i][j] = numOfPathsRight + numOfPathsBottom;
+        return records[i][j];
+    }
+}
+
+====================================================
+Code (Java, linear time DP)
+--------------------------------------
+public class Solution {
+    public int uniquePathsWithObstacles(int[][] obstacleGrid) {
+        int lenRow = obstacleGrid.length;
+        int lenCol = obstacleGrid[0].length;
+        int[][] records = new int[lenRow][lenCol];
+        
+        for (int i = 0; i < lenRow; i++) {
+            for (int j = 0; j < lenCol; j++) {
+                records[i][j] = 0;
+            }
+        }
+        records[0][0] = 1;
+        
+        for (int i = 0; i < lenRow; i++) {
+            for (int j = 0; j < lenCol; j++) {
+                if (obstacleGrid[i][j] == 1) {
+                    records[i][j] = 0;
+                } else if (i != 0 || j != 0) {
+                    records[i][j] = getNumOfPaths(obstacleGrid, records, i-1, j, lenRow, lenCol) +
+                        getNumOfPaths(obstacleGrid, records, i, j-1, lenRow, lenCol);
+                }
+            }
+        }
+        
+        return records[lenRow-1][lenCol-1];
+    }
+    
+    public static int getNumOfPaths(
+            int[][] grid, int[][] records, int i, int j, int lenRow, int lenCol) {
+        if (i < 0 || i >= lenRow || j < 0 || j >= lenCol || grid[i][j] == 1)
+            return 0;
+        else
+            return records[i][j];
+    }
+}

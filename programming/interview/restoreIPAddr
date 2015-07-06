@@ -1,0 +1,86 @@
+Description:
+
+Given a string containing only digits, restore it by returning all possible valid IP address combinations.
+
+For example:
+Given "25525511135",
+
+return ["255.255.11.135", "255.255.111.35"]. (Order does not matter)
+
+===============================================
+Thoughts:
+------------------------------
+
+1. Recursion is the easiest way to solve.
+
+2. Iteratiion is harder to think, yet about 4 times faster in running time.
+    Notice the break and continue in the last for loop...
+    idx3 determines both the third segment and the fourth segment. 
+    When the 3rd segment is illegal, there is no need to check the 4th segment with the same idx3 (because a bad idx2 value caused the 3rd segment illegal, and we need to backtrack and modify the idx2 value).
+    However, if the 3rd segment is legal and the 4th segment is illegal, we should continue rather than break, since the illegalibility of the 4th segment might be originated from the wrong idx3 separation, and we should explore other separation methods to make both idx3 and idx4 illegal. (backtracking and finding another idx3 value is the continue operation, not break).
+
+3. Always pay attention to the beginning and finish of the loop variables in Python... Big trap...
+
+===============================================
+Code (Python, recursion):
+------------------------------
+class Solution:
+    # @param s, a string
+    # @return a list of strings
+    def restoreIpAddresses(self, s):
+        result = []
+        lstOfSegments = []
+        self.restoreRecursion(0, 0, s, lstOfSegments, result)
+        return result
+    
+    def restoreRecursion(self, startIdx, segID, s, lstOfSegments, result):
+        idx = startIdx
+        for endIdx in range(idx+1, len(s)+1):
+            currSegStr = s[startIdx:endIdx]
+            if len(currSegStr) > 1 and currSegStr[0] == '0':
+                return
+            if int(currSegStr) <= 255:
+                lstOfSegments.insert(segID, currSegStr)
+                if segID < 3 and endIdx < len(s):
+                    self.restoreRecursion(endIdx, segID+1, s, lstOfSegments, result)
+                elif segID == 3 and endIdx == len(s):
+                    self.concatNewResult(lstOfSegments, result)
+    
+    def concatNewResult(self, lst, result):
+        newResult = lst[0]+"."+lst[1]+"."+lst[2]+"."+lst[3]
+        result.append(newResult)
+        
+============================================
+Code (Python, iterative):
+-------------------------------
+class Solution:
+    # @param s, a string
+    # @return a list of strings
+    def restoreIpAddresses(self, s):
+        result = []
+        lstOfSegments = []
+        lenOfString = len(s)
+        idx0 = 0
+        
+        for idx1 in range(1, min(4, lenOfString)):
+            if self.isValidIPSegment(s[idx0:idx1]) is False:
+                break
+            for idx2 in range(idx1+1, min(idx1+4, lenOfString)):
+                if self.isValidIPSegment(s[idx1:idx2]) is False:
+                    break
+                for idx3 in range(idx2+1, min(idx2+4, lenOfString)):
+                    if self.isValidIPSegment(s[idx2:idx3]) is False:
+                        break
+                    if self.isValidIPSegment(s[idx3:lenOfString]) is False:
+                        continue
+                    result.append(s[idx0:idx1]+"."+s[idx1:idx2]+"."+s[idx2:idx3]+"."+s[idx3:lenOfString])
+                    
+        return result
+
+    def isValidIPSegment(self, seg):
+        lenOfSeg = len(seg)
+        if lenOfSeg > 1 and seg[0] == '0':
+            return False
+        if int(seg) > 255:
+            return False
+        return True

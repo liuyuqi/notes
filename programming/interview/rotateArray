@@ -1,0 +1,55 @@
+Thoughts:
+
+Can do it in place, yet too hard...
+Best balance is to copy the whole array elsewhere, and copy back by the steps needed to take.
+
+=================================
+C Code:
+------------------------
+int getNextIndex(int currIndex, int len, int step) {
+    return (currIndex+step)%len;
+}
+
+void rotate(int nums[], int n, int k) {
+    int i;
+    
+    k = k % n;
+    if (k == 0)
+        return;
+        
+    int *orig = (int*)malloc(sizeof(int[n]));
+    for (i = 0; i < n; i++) {
+        orig[i] = nums[i];
+    }
+    
+    for (i = 0; i < n; i++) {
+        nums[getNextIndex(i, n, k)] = orig[i];
+    }
+    
+    return;
+}
+
+=================================
+Java Code:
+-------------------------
+public class Solution {
+    public static int getNextIndex(int currIndex, int len, int step) {
+        return (currIndex+step)%len; // Dealing with the wrapping around case.
+    }
+    
+    public void rotate(int[] nums, int k) {
+        k = k % nums.length; // Figure out how many steps on earth do we need to rotate.
+        if (k == 0)
+            return; // Unnecessary to do anything...
+        
+        int originalArray[] = new int[nums.length];
+        for (int i = 0; i < nums.length; i++) {
+            originalArray[i] = nums[i]; // First make a copy.
+        }
+        
+        for (int i = 0; i < nums.length; i++) {
+            nums[getNextIndex(i, nums.length, k)] = originalArray[i]; // Copy back with the steps taken.
+        }
+        return;
+    }
+}

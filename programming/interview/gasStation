@@ -1,0 +1,95 @@
+Description:
+
+ There are N gas stations along a circular route, where the amount of gas at station i is gas[i].
+
+You have a car with an unlimited gas tank and it costs cost[i] of gas to travel from station i to its next station (i+1). You begin the journey with an empty tank at one of the gas stations.
+
+Return the starting gas station's index if you can travel around the circuit once, otherwise return -1.
+
+Note:
+The solution is guaranteed to be unique. 
+
+=====================================================
+Thoughts:
+---------------------------------
+Since the solution is guaranteed to be unique, there should be some point where the car is "shortest" of gas. Find that point and avoid starting before it. Start the trip right after the point and try one cycle. After the test run, if the car is never short of gas in the process, we then found the starting point. Otherwise, there is no possibility that the car can survive the round trip.
+
+This thought is annoying, since it's hard to understand. We may also try some other way:
+
+Start traversing the array with one arbitrary index. Calculate the remaining fuel after every point in a cumulative way. If the remaining fuel value >= 0, then we can safely proceed. Otherwise, we know that there is not enough fuel and should add more fuel from points before the starting point. Expand the range in the array in both directions until we traveled a whole cycle.
+
+=====================================================
+Code 1 (iterative DP, 2 times visit, Python):
+----------------------------------------
+class Solution:
+    # @param {integer[]} gas
+    # @param {integer[]} cost
+    # @return {integer}
+    def canCompleteCircuit(self, gas, cost):
+        n = len(gas)
+        records = [0]*n
+        self.getRecords(records, gas, cost, 0)
+        leastIdx = self.getLeastIdx(records)
+        self.getRecords(records, gas, cost, (leastIdx+1)%n)
+        for r in records:
+            if r < 0:
+                return -1
+        return (leastIdx+1)%n
+        
+    
+    def getRecords(self, records, gas, cost, startIdx):
+        n = len(gas)
+        realIdx = 0
+        gasRemaining = 0 # the remaining gas amount at gas station i+1
+        for logicalIdx in range(n):
+            realIdx = (startIdx + logicalIdx) % n
+            gasRemaining = gasRemaining + gas[realIdx] - cost[realIdx]
+            records[realIdx] = gasRemaining
+
+    def getLeastIdx(self, records):
+        n = len(records)
+        returnIdx = 0
+        minValue = records[0]
+        for idx in range(n):
+            if records[idx] < minValue:
+                minValue = records[idx]
+                returnIdx = idx
+        return returnIdx
+        
+================================================================
+Code (iterative DP, one time visit, Python):
+----------------------------------------------------
+class Solution:
+    # @param {integer[]} gas
+    # @param {integer[]} cost
+    # @return {integer}
+    def canCompleteCircuit(self, gas, cost):
+        n = len(gas)
+        steps = 0
+        remainGas = 0
+        remainGasTmp = 0
+        startIdx = 0
+        leftIdx = n-1 # which only proceeds left
+        rightIdx = 0 # which only proceeds right
+        while steps < n:
+            remainGasTmp = remainGas + gas[rightIdx] - cost[rightIdx]
+            if remainGasTmp >= 0: # still has remaining gas, can continue
+                remainGas = remainGasTmp
+                rightIdx += 1
+                steps += 1
+            else: # will not continue going right, should go left.
+                while steps < n: # do not go past the right front
+                    remainGas = remainGas + gas[leftIdx] - cost[leftIdx]
+                    if remainGas >= 0: # stop going left and continue going right
+                        startIdx = leftIdx # record the new starting point
+                    leftIdx -= 1
+                    steps += 1
+                    if remainGas >= 0: # continue going right
+                        break
+                
+        # out of the loop, see whether we got the desired answer.
+        if remainGas >= 0:   
+            return startIdx
+        else:
+            return -1
+

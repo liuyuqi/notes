@@ -1,0 +1,56 @@
+Description:
+
+Given a collection of integers that might contain duplicates, S, return all possible subsets.
+
+Note:
+Elements in a subset must be in non-descending order.
+The solution set must not contain duplicate subsets.
+For example,
+If S = [1,2,2], a solution is:
+
+[
+  [2],
+  [1],
+  [1,2,2],
+  [2,2],
+  [1,2],
+  []
+]
+
+==================================
+Thought:
+
+Using DP, since there is subproblems found...
+
+==================================
+Code (Python, iterative DP):
+-------------------------------
+class Solution:
+    # @param num, a list of integer
+    # @return a list of lists of integer
+    def subsetsWithDup(self, S):
+        result = []
+        result.insert(0, [])
+        S.sort()
+        hs = {}
+        numOfNewlyAdded = 0
+        currLength = 1
+        
+        for currIdx in range(len(S)):
+            for i in range(currLength):
+                newItem = []
+                if result[i] != []:
+                    newItem = list(result[i])
+                    newItem.append(S[currIdx])
+                else:
+                    newItem = [S[currIdx]]
+                
+                strOfList = str(newItem)
+                if hs.has_key(strOfList) == False:
+                    result.append(newItem)
+                    hs[strOfList] = True
+                    numOfNewlyAdded += 1
+            currLength += numOfNewlyAdded
+            numOfNewlyAdded = 0
+            
+        return result

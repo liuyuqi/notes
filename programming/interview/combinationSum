@@ -1,0 +1,45 @@
+Description:
+
+Given a set of candidate numbers (C) and a target number (T), find all unique combinations in C where the candidate numbers sums to T.
+
+The same repeated number may be chosen from C unlimited number of times.
+
+Note:
+All numbers (including target) will be positive integers.
+Elements in a combination (a1, a2, … , ak) must be in non-descending order. (ie, a1 ≤ a2 ≤ … ≤ ak).
+The solution set must not contain duplicate combinations.
+For example, given candidate set 2,3,6,7 and target 7, 
+A solution set is: 
+[7] 
+[2, 2, 3] 
+
+===================================
+Code (Python, recursive):
+-----------------------------
+class Solution:
+    # @param candidates, a list of integers
+    # @param target, integer
+    # @return a list of lists of integers
+    def combinationSum(self, candidates, target):
+        results = [] # results is a list of list
+        partResult = [] # a list of integers
+        candidates.sort()
+        self.combSumRecursive(partResult, 0, 0, candidates, target, results)
+        return results
+    
+    def combSumRecursive(self, partResult, currentSum, startIdx, candidates, target, results):
+        if currentSum == target:
+            results.append(partResult)
+            return
+        if currentSum > target or startIdx >= len(candidates):
+            return
+        
+        dupCount = 1
+        newPartResult = partResult[:]
+        
+        while currentSum + dupCount * candidates[startIdx] <= target:
+            newPartResult.append(candidates[startIdx])
+            self.combSumRecursive(newPartResult, currentSum+dupCount*candidates[startIdx], startIdx+1, candidates, target, results)
+            dupCount += 1
+        
+        self.combSumRecursive(partResult, currentSum, startIdx+1, candidates, target, results)

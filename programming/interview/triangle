@@ -1,0 +1,49 @@
+Thoughts:
+
+This can be implemented very effectively in C. The main loop may maintain two lists, of which one contains the elements in the upper layer row, and the other contains elements in the lower layer row.
+
+Before the end of the current loop, copy the row from upper layer to the lower layer.
+At the beginning of the next loop, copy the next upper row in to upper layer.
+
+The first copy can be implemented by switching the two pointers. Notice the use of double pointers!
+
+=============================================
+Code (C, iterative DP):
+------------------------------------
+void copyRow (int *src, int *dst, int len) {
+    int col;
+    for (col = 0; col < len; col++) {
+        dst[col] = src[col];
+    }
+}
+
+void switchRow (int **src, int **dst) {
+    int *temp;
+    temp = *src;
+    *src = *dst;
+    *dst = temp;
+}
+
+int min (int a, int b) {
+    return (a>b)?b:a;
+}
+
+int minimumTotal(int **triangle, int numRows) {
+    if (numRows == 1)
+        return triangle[0][0];
+        
+    int *lowerLayer = (int*)malloc(sizeof(int[numRows]));
+    int *upperLayer = (int*)malloc(sizeof(int[numRows]));
+    int row, col;
+
+    copyRow(triangle[numRows-1], lowerLayer, numRows);
+
+    for (row = numRows-1; row > 0; row--) {
+        copyRow(triangle[row-1], upperLayer, row);
+        for (col = 0; col < row; col++) {
+            upperLayer[col] += min(lowerLayer[col], lowerLayer[col+1]);
+        }
+        switchRow(&lowerLayer, &upperLayer);
+    }
+    return lowerLayer[0];
+}
